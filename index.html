@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<!--
+==============================================================================
+                 СВАДЕБНЫЙ ОПРОСНИК (ОДИН HTML-ФАЙЛ)
+==============================================================================
+
+КАК НАСТРОИТЬ ОТПРАВКУ ОТВЕТОВ:
+
+──────────────────────────────────────────────────────────────────────────────
+ВАРИАНТ 1 (РЕКОМЕНДУЕТСЯ) — FORMSPREE
+──────────────────────────────────────────────────────────────────────────────
+1. Зарегистрируйтесь: https://formspree.io
+2. Создайте новую форму.
+3. Получите Form ID (например: xqazwerr).
+4. Замените строку:
+
+   action="https://formspree.io/f/YOUR_FORM_ID"
+
+   на
+
+   action="https://formspree.io/f/xqazwerr"
+
+5. Готово. Все ответы будут приходить на ваш email.
+
+──────────────────────────────────────────────────────────────────────────────
+ВАРИАНТ 2 — EMAILJS (без бэкенда)
+──────────────────────────────────────────────────────────────────────────────
+1. Зарегистрируйтесь: https://www.emailjs.com
+2. Создайте Email Service.
+3. Создайте Email Template.
+4. Получите:
+   - SERVICE_ID
+   - TEMPLATE_ID
+   - PUBLIC_KEY
+5. Раскомментируйте EmailJS-код внизу файла и вставьте свои значения.
+
+──────────────────────────────────────────────────────────────────────────────
+ВАРИАНТ 3 — TELEGRAM BOT
+──────────────────────────────────────────────────────────────────────────────
+1. Откройте @BotFather в Telegram.
+2. Создайте бота командой /newbot.
+3. Получите BOT_TOKEN.
+4. Узнайте свой CHAT_ID (например через @userinfobot).
+5. Раскомментируйте Telegram-код внизу файла.
+6. Вставьте BOT_TOKEN и CHAT_ID.
+
+------------------------------------------------------------------------------
+По умолчанию используется Formspree.
+------------------------------------------------------------------------------
+-->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приглашение на свадьбу</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Для EmailJS (если захотите использовать)
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    -->
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+    background-color:#fcfcfc;
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(0,0,0,0.03) 0 2px, transparent 2px),
+        radial-gradient(circle at 90% 15%, rgba(0,0,0,0.03) 0 2px, transparent 2px),
+        radial-gradient(circle at 15% 85%, rgba(0,0,0,0.03) 0 2px, transparent 2px),
+        radial-gradient(circle at 85% 80%, rgba(0,0,0,0.03) 0 2px, transparent 2px);
+
+    background-size: 220px 220px;
+
+    color:#111;
+    font-family:'Inter', sans-serif;
+    line-height:1.7;
+}
+        
+
+        .container{
+            max-width:800px;
+            margin:40px auto;
+            background:#fff;
+            padding:40px 30px;
+            border:1px solid #ddd;
+            box-shadow:0 10px 30px rgba(0,0,0,0.05);
+        }
+body::before,
+body::after{
+    content:"❦";
+    position:fixed;
+    font-family:"Times New Roman", serif;
+    font-size:180px;
+    color:rgba(0,0,0,0.07);
+    z-index:-1;
+    pointer-events:none;
+    user-select:none;
+}
+
+body::before{
+    top:20px;
+    left:30px;
+    transform:rotate(-20deg);
+}
+
+body::after{
+    bottom:20px;
+    right:30px;
+    transform:rotate(160deg);
+}
+       h1,h2{
+    font-family:'Cormorant Garamond', serif;
+            font-weight:normal;
+            letter-spacing:1px;
+text-align:center;
+        }
+
+        h1{
+            font-size:2.4rem;
+            margin-bottom:25px;
+        }
+
+        .divider{
+            width:90px;
+            height:2px;
+            background:#111;
+            margin:25px auto;
+        }
+
+        .intro{
+            text-align:center;
+            color:#333;
+        }
+
+        .intro p{
+            margin-bottom:15px;
+        }
+
+      .info-box{
+    margin-top:25px;
+    padding:20px;
+    background:#fff;
+    border-left:4px solid #111;
+}
+
+.event-date,
+.event-place{
+    text-align:center;
+    margin:18px 0;
+}
+
+.countdown-box{
+    margin-top:35px;
+    text-align:center;
+    padding-top:20px;
+    border-top:1px solid #ddd;
+}
+.countdown-title{
+    font-size:1rem;
+    color:#666;
+    margin-bottom:10px;
+}
+
+#countdown{
+    font-family:'Cormorant Garamond', serif;
+    font-size:2.3rem;
+    font-weight:600;
+    color:#111;
+    line-height:1.4;
+    padding:15px 0;
+}
+
+.event-date strong{
+    display:block;
+    font-family:'Cormorant Garamond', serif;
+    font-size:2.4rem;
+    font-weight:600;
+    margin-bottom:6px;
+}
+
+.event-place strong{
+    display:block;
+    font-family:'Cormorant Garamond', serif;
+    font-size:2rem;
+    font-weight:600;
+    margin-bottom:6px;
+}
+.event-date span,
+.event-place span{
+    display:block;
+    color:#555;
+    font-size:1rem;
+    line-height:1.6;
+}
+
+.eighteen{
+    margin-top:12px;
+    font-style:italic;
+    color:#555;
+}
+
+        form{
+            margin-top:40px;
+        }
+
+        .form-group{
+            margin-bottom:28px;
+        }
+
+        label.main-label{
+            display:block;
+            font-weight:bold;
+            margin-bottom:12px;
+            font-size:1.05rem;
+        }
+
+        input[type="text"],
+        textarea{
+            width:100%;
+            padding:12px 14px;
+            border:1px solid #bbb;
+            background:#fff;
+            font-size:15px;
+            transition:0.2s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus{
+            outline:none;
+            border-color:#000;
+        }
+
+        .radio-option{
+            display:flex;
+            align-items:flex-start;
+            margin-bottom:12px;
+            cursor:pointer;
+        }
+
+        .radio-option input{
+            margin-right:10px;
+            margin-top:4px;
+            accent-color:#000;
+        }
+
+        #commentBlock{
+            display:none;
+            margin-top:18px;
+        }
+
+        button{
+            width:100%;
+            padding:15px;
+            background:#111;
+            color:#fff;
+            border:none;
+            cursor:pointer;
+            font-size:16px;
+            transition:0.25s;
+        }
+
+        button:hover{
+            background:#000;
+        }
+
+        #result{
+            display:none;
+            margin-top:35px;
+            text-align:center;
+            padding:25px;
+            border:1px solid #ddd;
+            background:#fafafa;
+            font-size:1.1rem;
+        }
+
+        footer{
+            margin-top:40px;
+            text-align:center;
+            color:#777;
+            font-size:14px;
+        }
+.couple-sign{
+    text-align:center;
+    margin-top:60px;
+    margin-bottom:20px;
+}
+
+.couple-title{
+    color:#777;
+    font-style:italic;
+    margin-bottom:10px;
+}
+
+.couple-names{
+    font-family:'Cormorant Garamond', serif;
+    font-size:3.4rem;
+    font-weight:500;
+    letter-spacing:2px;
+}
+        @media (max-width:600px){
+
+            .container{
+                margin:15px;
+                padding:25px 18px;
+            }
+
+            h1{
+                font-size:1.9rem;
+            }
+
+            button{
+                font-size:15px;
+            }
+
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Приглашение на свадьбу</h1>
+
+    <div class="divider"></div>
+
+    <div class="intro">
+        <p>
+            Дорогие друзья и близкие! Мы с огромной радостью приглашаем вас
+            разделить с нами самый важный день в нашей жизни.
+        </p>
+
+        <p>
+            <strong>Тематика свадьбы — чёрно-белая.</strong><br>
+            Dress code: чёрно-белые наряды.
+        </p>
+
+        <p class="eighteen">
+            Для комфорта всех гостей мероприятие рассчитано на аудиторию 18+.
+        </p>
+
+       <div class="info-box">
+
+    <div class="event-date">
+        <strong>31 июля 2026</strong>
+        <span>15:00</span>
+    </div>
+
+    <div class="event-place">
+        <strong>Парк-отель «Хвоя»</strong>
+        <span>микрорайон Речкуновская зона отдыха, 6а</span>
+    </div>
+
+    <div class="countdown-box">
+        <div class="countdown-title">
+            До нашего праздника осталось
+        </div>
+
+        <div id="countdown">
+            Загрузка...
+        </div>
+    </div>
+
+    <div class="route-block">
+        <a
+            class="route-btn"
+            href="https://yandex.ru/maps/?text=Парк-отель Хвоя Речкуновская зона отдыха 6а"
+            target="_blank">
+            Построить маршрут
+        </a>
+    </div>
+
+    <div class="rsvp-deadline">
+        Пожалуйста, подтвердите участие до 15.07.2026
+    </div>
+
+</div>
+    </div>
+
+    <!--
+    ==========================================================================
+    FORM ACTION:
+    Замените YOUR_FORM_ID на ваш Formspree ID.
+    ==========================================================================
+    -->
+
+    <form id="weddingForm"
+          action="https://formspree.io/f/mgobkdwe"
+          method="POST">
+<input type="hidden" name="_subject" value="💍 Новый ответ на свадебное приглашение">
+
+        <div class="form-group">
+            <label class="main-label">
+                Фамилия и имя
+            </label>
+
+            <input
+                type="text"
+                name="Фамилия_и_имя"
+                required
+                placeholder="Введите ваше имя">
+        </div>
+
+        <div class="form-group">
+
+            <label class="main-label">
+    Что предпочитаете из напитков?
+</label>
+
+<label class="radio-option">
+    <input
+        type="checkbox"
+        name="Напиток[]"
+        value="Водка">
+    Водка
+</label>
+
+<label class="radio-option">
+    <input
+        type="checkbox"
+        name="Напиток[]"
+        value="Вино">
+    Вино
+</label>
+
+<label class="radio-option">
+    <input
+        type="checkbox"
+        name="Напиток[]"
+        value="Шампанское">
+    Шампанское
+</label>
+
+<label class="radio-option">
+    <input
+        type="checkbox"
+        name="Напиток[]"
+        value="Морс / безалкогольные напитки">
+    Морс / безалкогольные напитки
+</label>
+
+        </div>
+
+        <div class="form-group">
+
+            <label class="main-label">
+                Сможете ли вы присутствовать?
+            </label>
+
+            <label class="radio-option">
+                <input
+                    type="radio"
+                    name="Присутствие"
+                    value="Обязательно буду! С нетерпением жду!"
+                    required>
+
+                Обязательно буду! С нетерпением жду!
+            </label>
+
+            <label class="radio-option">
+                <input
+                    type="radio"
+                    name="Присутствие"
+                    value="К сожалению, не смогу присутствовать"
+                    id="cannotAttend">
+
+                К сожалению, не смогу присутствовать
+            </label>
+
+            <div id="commentBlock">
+                <textarea
+                    name="Комментарий"
+                    rows="4"
+                    placeholder="Если хотите, можете оставить комментарий..."></textarea>
+            </div>
+
+        </div>
+
+        <button type="submit">
+            Отправить ответ
+        </button>
+
+    </form>
+
+    <div id="result"></div>
+<div class="couple-sign">
+
+    <div class="couple-title">
+        С любовью
+    </div>
+
+    <div class="couple-names">
+        Артём и Варвара
+    </div>
+
+</div>
+    <footer>
+        До скорой встречи ✨
+    </footer>
+
+</div>
+
+<script>
+
+    // ============================================================
+    // Показываем комментарий, если гость не сможет присутствовать
+    // ============================================================
+
+    const attendanceRadios = document.querySelectorAll(
+        'input[name="Присутствие"]'
+    );
+
+    const commentBlock = document.getElementById("commentBlock");
+
+    attendanceRadios.forEach(radio => {
+        radio.addEventListener("change", function(){
+
+            if(this.value === "К сожалению, не смогу присутствовать"){
+                commentBlock.style.display = "block";
+            }else{
+                commentBlock.style.display = "none";
+            }
+
+        });
+    });
+
+    // ============================================================
+    // Отправка через Formspree
+    // ============================================================
+
+    const form = document.getElementById("weddingForm");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async function(e){
+
+        e.preventDefault();
+const drinks = document.querySelectorAll(
+    'input[name="Напиток[]"]:checked'
+);
+
+if (drinks.length === 0) {
+    alert("Пожалуйста, выберите хотя бы один напиток.");
+    return;
+}
+
+        const formData = new FormData(form);
+
+        try{
+
+            const response = await fetch(form.action,{
+                method:"POST",
+                body:formData,
+                headers:{
+                    "Accept":"application/json"
+                }
+            });
+
+            if(response.ok){
+
+                const attendance =
+                    formData.get("Присутствие");
+
+                form.style.display = "none";
+
+                result.style.display = "block";
+
+                if(attendance ===
+                    "К сожалению, не смогу присутствовать"){
+
+                    result.innerHTML =
+                        "<h2>Спасибо!</h2><br>" +
+                        "Жаль, что не сможете быть с нами!";
+
+                }else{
+
+                    result.innerHTML =
+                        "<h2>Спасибо!</h2><br>" +
+                        "Ваш ответ отправлен. Будем рады видеть вас!";
+
+                }
+
+            }else{
+
+                alert(
+                    "Не удалось отправить форму. Проверьте настройки Formspree."
+                );
+
+            }
+
+        }catch(error){
+
+            alert(
+                "Ошибка отправки. Проверьте подключение к интернету или настройки сервиса."
+            );
+
+        }
+
+    });
+
+    // ============================================================
+    // EMAILJS (АЛЬТЕРНАТИВА)
+    // ============================================================
+
+    /*
+    emailjs.init({
+        publicKey: "YOUR_PUBLIC_KEY"
+    });
+
+    emailjs.send(
+        "YOUR_SERVICE_ID",
+        "YOUR_TEMPLATE_ID",
+        {
+            guest_name: "...",
+            drink: "...",
+            attendance: "...",
+            comment: "..."
+        }
+    );
+    */
+
+    // ============================================================
+    // TELEGRAM BOT (АЛЬТЕРНАТИВА)
+    // ============================================================
+
+    /*
+    const BOT_TOKEN = "YOUR_BOT_TOKEN";
+    const CHAT_ID = "YOUR_CHAT_ID";
+
+    fetch(
+        `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                chat_id:CHAT_ID,
+                text:
+                "Новый ответ на свадьбу\n\n" +
+                "Имя: ...\n" +
+                "Напиток: ...\n" +
+                "Присутствие: ...\n" +
+                "Комментарий: ..."
+            })
+        }
+    );
+    */
+// ============================================================
+// ОБРАТНЫЙ ОТСЧЁТ ДО СВАДЬБЫ
+// ============================================================
+
+function updateCountdown() {
+
+    const weddingDate = new Date("2026-07-31T15:00:00");
+    const now = new Date();
+
+    const diff = weddingDate - now;
+
+    const countdown = document.getElementById("countdown");
+
+    if (!countdown) return;
+
+    if (diff <= 0) {
+        countdown.innerHTML = "Сегодня наш праздник! ❤️";
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    const hours = Math.floor(
+        (diff % (1000 * 60 * 60 * 24)) /
+        (1000 * 60 * 60)
+    );
+
+    const minutes = Math.floor(
+        (diff % (1000 * 60 * 60)) /
+        (1000 * 60)
+    );
+
+    countdown.innerHTML =
+        days + " дней<br>" +
+        hours + " часов<br>" +
+        minutes + " минут";
+}
+
+updateCountdown();
+setInterval(updateCountdown, 60000);
+</script>
+
+</body>
+</html>
