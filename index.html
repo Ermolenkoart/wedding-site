@@ -631,13 +631,13 @@ if (drinks.length === 0) {
                     "Accept":"application/json"
                 }
             });
-console.log(response.status);
-console.log(await response.text());
             if(response.ok){
 
                 const attendance =
                     formData.get("Присутствие");
-
+ const guestName =
+        formData.get("Фамилия_и_имя");
+const firstName = guestName.trim().split(" ").pop();
                 form.style.display = "none";
 
                 result.style.display = "block";
@@ -646,14 +646,14 @@ console.log(await response.text());
                     "К сожалению, не смогу присутствовать"){
 
                     result.innerHTML =
-                        "<h2>Спасибо!</h2><br>" +
-                        "Жаль, что не сможете быть с нами!";
+    "<h2>Спасибо, " + firstName + "! ❤️</h2><br>" +
+    "Спасибо, что сообщили нам. Нам будет очень жаль, что вас не будет рядом в этот день.";
 
                 }else{
 
                     result.innerHTML =
-                        "<h2>Спасибо!</h2><br>" +
-                        "Ваш ответ отправлен. Будем рады видеть вас!";
+    "<h2>Спасибо, " + guestName + "! ❤️</h2><br>" +
+    "Мы получили ваш ответ и будем рады видеть вас на нашем празднике!";
 
                 }
 
