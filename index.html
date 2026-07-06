@@ -322,7 +322,20 @@ text-align:center;
             }
 
         }
+/* ===========================
+   Плавное появление блоков
+=========================== */
 
+.animate{
+    opacity:0;
+    transform:translateY(30px);
+    transition:all .8s ease;
+}
+
+.animate.show{
+    opacity:1;
+    transform:translateY(0);
+}
     </style>
 </head>
 <body>
@@ -333,7 +346,7 @@ text-align:center;
 
     <div class="divider"></div>
 
-    <div class="intro">
+    <div class="intro animate">
         <p>
             Дорогие друзья и близкие! Мы с огромной радостью приглашаем вас
             разделить с нами самый важный день в нашей жизни.
@@ -348,7 +361,7 @@ text-align:center;
             Для комфорта всех гостей мероприятие рассчитано на аудиторию 18+.
         </p>
 
-       <div class="info-box">
+       <div class="info-box animate">
 
     <div class="event-date">
         <strong>31 июля 2026</strong>
@@ -394,6 +407,7 @@ text-align:center;
     -->
 
     <form id="weddingForm"
+      class="animate"
           action="https://formspree.io/f/mlgyzjvl"
           method="POST">
 <input type="hidden" name="_subject" value="💍 Новый ответ на свадебное приглашение">
@@ -537,8 +551,8 @@ text-align:center;
 
     </form>
 
-    <div id="result"></div>
-<div class="couple-sign">
+    <div id="result" class="animate"></div>
+<div class="couple-sign animate">
 
     <div class="couple-title">
         С любовью
@@ -549,7 +563,7 @@ text-align:center;
     </div>
 
 </div>
-    <footer>
+    <footer class="animate">
         До скорой встречи ✨
     </footer>
 
@@ -763,6 +777,27 @@ function updateCountdown() {
 
 updateCountdown();
 setInterval(updateCountdown, 60000);
+  // ============================================================
+// Плавное появление блоков
+// ============================================================
+
+const observer = new IntersectionObserver((entries) => {
+
+    entries.forEach(entry => {
+
+        if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+        }
+
+    });
+
+}, {
+    threshold: 0.15
+});
+
+document.querySelectorAll(".animate").forEach(element => {
+    observer.observe(element);
+});
 </script>
 
 </body>
